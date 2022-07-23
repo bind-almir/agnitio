@@ -1,0 +1,47 @@
+service: agnitio
+
+frameworkVersion: '3'
+
+provider:
+  name: aws
+  runtime: nodejs16.x
+  region: eu-west-1
+  stage: dev
+  environment:
+    UPLOAD_BUCKET_NAME: ${ssm:/agnitio/upload-bucket-name}
+
+plugins: 
+  - serverless-iam-roles-per-function
+
+functions:
+
+  get-signed-url:
+    handler: src/get-signed-url.handler
+    iamRoleStatements:
+      - Effect: Allow
+        Action:
+          - s3:PutObject
+        Resource: "arn:aws:s3:::${self:provider.environment.UPLOAD_BUCKET_NAME}"
+    events:
+      - http:
+          path: /get-signed-url
+          method: get
+          cors: true
+
+  recognize:
+    handler: src/recognize.handler
+    iamRoleStatements:
+      - Effect: Allow
+        Action:
+          - s3:GetObject
+        Resource: "arn:aws:s3:::${self:provider.environment.UPLOAD_BUCKET_NAME}"
+      - Effect: Allow
+        Action:
+          - rekognition:*
+        Resource: "*"
+    events:
+      - http:
+          path: /recognize
+          method: post
+          cors: true
+      
