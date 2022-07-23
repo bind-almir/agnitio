@@ -11,7 +11,7 @@
     body: JSON.stringify(body),
     headers: {
       'Content-Type': contentType || 'application/json',
-      'Access-Control-Allow-Origin': '*',
+      'Access-Control-Allow-Origin': 'https://famous-fairy-e0b928.netlify.app',
       'Access-Control-Allow-Credentials': true, 
     },
   }
@@ -35,12 +35,3 @@ module.exports = {
   buildResponse,
   errorResponse
 };
-
-// uploadAudioFeedback(link: string, feedback: Blob) {
-//   const options = {
-//     headers: new HttpHeaders({
-//       'Content-Type': feedback.type,
-//     }),
-//   };
-//   return this.http.put(link, feedback, options);
-// }
