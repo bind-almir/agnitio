@@ -17,6 +17,7 @@ const handler = async (event) => {
           Name: fileName
         }
       },
+      Attributes: ["ALL"]
     });
     
     const response = await client.send(command);

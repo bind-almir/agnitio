@@ -1,7 +1,7 @@
 <ion-header>
   <ion-toolbar color="primary">
     <ion-title>
-      Agnitio, Facial Emotion Recognition
+      Agnitio, Facial Recognition
     </ion-title>
   </ion-toolbar>
 </ion-header>
@@ -14,11 +14,19 @@
 
   <ion-img *ngIf="image" [src]="image"></ion-img>
 
-  <ion-card *ngIf="isRecognized">
+  <ion-card *ngIf="FaceDetails?.length > 0">
     <ion-card-content>
-      <ion-item>
-        <!-- <ion-icon name="location" slot="start"></ion-icon> -->
-        <!-- Gender: {{  }} -->
+      <ion-item *ngFor="let face of FaceDetails; let i = index;" >
+        <ion-label>
+          <h2>Face {{i+1}}</h2>
+        </ion-label>
+        Gender: {{ face?.Gender?.Value }}
+        <br>
+        Age: {{ face?.AgeRange?.Low }} - {{ face?.AgeRange?.High }}
+        <br>
+        Wearing sunglasses: {{ face?.Sunglasses?.Value }}
+        <br>
+        Emotion: {{ face?.Emotions.length > 0 ? face?.Emotions[0].Type : 'Neutral'}}
       </ion-item>
     </ion-card-content>
   </ion-card>

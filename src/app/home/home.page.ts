@@ -16,7 +16,7 @@ interface SignedUrl {
 export class HomePage {
 
   public image = null;
-  public isRecognized = false;
+  public FaceDetails: Array<any> = [];
 
   constructor(private http: HttpClient) {}
 
@@ -29,39 +29,42 @@ export class HomePage {
     });
 
     this.image = 'data:image/png;base64,' + photo.base64String;
+    const blob = this.base64ToArrayBuffer(photo.base64String);
 
-    const { signedUrl, fileName } = await this.getSignedUrl();
+    const { signedUrl, fileName } = await this.getSignedUrl(blob.type);
     try {
-      await this.uploadFile(signedUrl, photo.base64String);
+      await this.uploadFile(signedUrl, blob);
+      const result: any = await this.recognize(fileName);
+      this.FaceDetails = result.FaceDetails;
     } catch (error) {
       console.log(error);
     }
   }
 
-  base64ToArrayBuffer(imageData) {
+  base64ToArrayBuffer(imageData): Blob {
     const rawData = atob(imageData);
     const bytes = new Array(rawData.length);
-    for (let x = 0; x < rawData.length; x++) {
-      bytes[x] = rawData.charCodeAt(x);
+    for (let i = 0; i < rawData.length; i++) {
+      bytes[i] = rawData.charCodeAt(i);
     }
     const arr = new Uint8Array(bytes);
     const blob = new Blob([arr], {type: 'image/png'});
     return blob;
-   }
+  }
 
-  async getSignedUrl(): Promise<SignedUrl> {
-    const url = await environment.api + '/get-signed-url';
+  async getSignedUrl(type: string): Promise<SignedUrl> {
+    const url = await environment.api + '/get-signed-url?ContentType=' + encodeURIComponent(type);
     const result = await this.http.get(url).toPromise();
     return result as SignedUrl;
   }
 
-  async recognize() {
-    this.isRecognized = true;
+  async recognize(fileName: string) {
+    const url = await environment.api + '/recognize';
+    const result = await this.http.post(url, { fileName }).toPromise();
+    return result;
   }
 
-  async uploadFile(link: string, file) {
-    file = this.base64ToArrayBuffer(file);
-    console.log(file)
+  async uploadFile(link: string, file: Blob) {
     const options = {
       headers: new HttpHeaders({
         'Content-Type': file.type,
