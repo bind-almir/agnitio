@@ -1,0 +1,7 @@
+{
+  "name": "agnitio",
+  "integrations": {
+    "capacitor": {}
+  },
+  "type": "angular"
+}
