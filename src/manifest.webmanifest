@@ -1,6 +1,6 @@
 {
-  "name": "app",
-  "short_name": "app",
+  "name": "Agnitio, face recognition app",
+  "short_name": "Agnitio",
   "theme_color": "#1976d2",
   "background_color": "#fafafa",
   "display": "standalone",

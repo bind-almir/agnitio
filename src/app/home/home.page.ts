@@ -1,7 +1,8 @@
 import { Component } from '@angular/core';
-import { Camera, CameraResultType, CameraSource, Photo, ImageOptions } from '@capacitor/camera';
+import { Camera, CameraResultType, CameraSource } from '@capacitor/camera';
 import { environment } from 'src/environments/environment';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { AlertController, LoadingController } from '@ionic/angular';
 
 interface SignedUrl {
   signedUrl: string;
@@ -15,10 +16,36 @@ interface SignedUrl {
 })
 export class HomePage {
 
+  public loading: HTMLIonLoadingElement;
   public image = null;
   public FaceDetails: Array<any> = [];
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient, private alertController: AlertController, private loadingCtrl: LoadingController) {}
+
+  async presentAlert(message: string) {
+    const alert = await this.alertController.create({
+      header: 'Agnitio',
+      subHeader: 'Info',
+      message,
+      buttons: ['OK']
+    });
+
+    await alert.present();
+  }
+
+  async showLoading(message) {
+    this.loading = await this.loadingCtrl.create({
+      message
+    });
+    
+    this.loading.present();
+  }
+
+  async hideLoading() {
+    if (this.loading) {
+      await this.loading.dismiss();
+    }
+  }
 
   async takePicture() {
     const photo = await Camera.getPhoto({
@@ -33,11 +60,17 @@ export class HomePage {
 
     const { signedUrl, fileName } = await this.getSignedUrl(blob.type);
     try {
+      await this.showLoading('Recognizing...');
       await this.uploadFile(signedUrl, blob);
       const result: any = await this.recognize(fileName);
       this.FaceDetails = result.FaceDetails;
+      if(this.FaceDetails.length === 0) {
+        await this.presentAlert('No faces found');
+      }
     } catch (error) {
       console.log(error);
+    } finally {
+      await this.hideLoading();
     }
   }
 
