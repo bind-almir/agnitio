@@ -7,7 +7,7 @@
 </ion-header>
 
 <ion-content>
-  
+
   <ion-button (click)="takePicture()" expand="block">
     <ion-icon name="camera" slot="start"></ion-icon>
     Capture image
@@ -25,9 +25,20 @@
         <br>
         Age: {{ face?.AgeRange?.Low }} - {{ face?.AgeRange?.High }}
         <br>
+        Smile: {{ face?.Smile?.Value }}
+        <br>
+        Beard: {{ face?.Beard?.Value }}
+        <br>
+        Mustache: {{ face?.Mustache?.Value }}
+        <br>
+        Mouth open: {{ face?.MouthOpen?.Value }}
+        <br>
+        Eyeglasses: {{ face?.Eyeglasses?.Value }}
+        <br>
         Wearing sunglasses: {{ face?.Sunglasses?.Value }}
         <br>
         Emotion: {{ face?.Emotions.length > 0 ? face?.Emotions[0].Type : 'Neutral'}}
+
       </ion-item>
     </ion-card-content>
   </ion-card>
